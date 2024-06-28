@@ -1,9 +1,13 @@
 import React from "react";
 import prisma from "../lib/db";
-export default function Todo() {
-    async function handle(formData:FormData) {
+import { cookies } from "next/headers";
+export default async function Todo() {
+    const cookiesStore = cookies()
+
+    async function handle(formData: FormData) {
         'use server'
-    
+        const cookiesStore = cookies()
+
         if (!formData) {
             throw new Error('no input');
         }
@@ -23,8 +27,11 @@ export default function Todo() {
                 title: title
             }
         });
-        return console.log(JSON.stringify(todo))
+        cookiesStore.set('todo', JSON.stringify(todo))
     }
+    const todos = await prisma.todo.findMany()
+    const cook = cookiesStore.get('todo')
+    console.log(cook)
     return (
         <main className=" flex min-h-screen justify-center items-center bg-slate-50 ">
             <div className="bg-slate-300 rounded-3xl py-6  h-[400px] w-[450px] flex flex-col text-slate-800">
