@@ -1,37 +1,12 @@
 import React from "react";
 import prisma from "../lib/db";
 import { cookies } from "next/headers";
+import { handle } from "../action";
+
 export default async function Todo() {
     const cookiesStore = cookies()
-
-    async function handle(formData: FormData) {
-        'use server'
-        const cookiesStore = cookies()
-
-        if (!formData) {
-            throw new Error('no input');
-        }
-
-        const title = formData.get('title');
-        const complete = formData.get('complete');
-
-        if (typeof title !== 'string') {
-            throw new Error('Invalid title');
-        }
-
-        const completeBoolean = complete === 'true' ? true : false;
-
-        const todo = await prisma.todo.create({
-            data: {
-                complete: completeBoolean,
-                title: title
-            }
-        });
-        cookiesStore.set('todo', JSON.stringify(todo))
-    }
+   
     const todos = await prisma.todo.findMany()
-    const cook = cookiesStore.get('todo')
-    console.log(cook)
     return (
         <main className=" flex min-h-screen justify-center items-center bg-slate-50 ">
             <div className="bg-slate-300 rounded-3xl py-6  h-[400px] w-[450px] flex flex-col text-slate-800">
